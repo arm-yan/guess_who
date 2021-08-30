@@ -2,6 +2,9 @@
 
 namespace App\Providers;
 
+use App\Services\MovieService\ActorsService;
+use App\Services\MovieService\Transformers\ActorTransformer;
+use GuzzleHttp\Client;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -13,7 +16,13 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        //
+        $this->app->bind(ActorsService::class, function ($app) {
+            $httpClient = new Client();
+            $actorTransformer = new ActorTransformer();
+            return new ActorsService($httpClient, $actorTransformer);
+        });
+
+        $this->app->alias(ActorsService::class, 'actors-service');
     }
 
     /**
